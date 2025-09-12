@@ -1,0 +1,140 @@
+!Use consistent units: N,m
+!Demo of a truss using bar elements
+
+!Enter preprocessor
+/prep7
+
+!Enter material properties, E = 70 GPa and nu = 0.3; linear elastic material behavior
+!We will assign properties to a material labeled as #1
+!use MP command - MP, Lab, MAT, C0, C1, C2, C3, C4
+
+mp,ex,1,70e9 !Young's modulus (N/m^2) assigned to material #1
+mp,prxy,1,0.3 !Poisson's ratio assigned to material #1
+
+!We can verify our material properties by listing them
+mplist,1 !list material properties for our material (material #1)
+
+!define geometry
+
+!We can define geometry by defining nodes at discrete locations and then form elements based on these nodes
+
+!The practice of creating nodes and elements is known as 'meshing'
+
+!use n command to define a node. This is a two-dimensional problem, so only x and y coordinates are needed
+!n command - N, NODE, X, Y, Z, THXY, THYZ, THZX
+!NODE above is a node number the user can define and the X,Y,Z fields are the x,y,z locations of the node
+
+n,1,0,0
+n,2,5,0
+n,3,8,0
+n,4,5,4
+n,5,0,4
+
+!plot the elements
+nplo !you may have to zoom out
+
+!create elements
+!define element type - this case we are using bar elements
+
+!Use ET command - ET, ITYPE, Ename, KOP1, KOP2, KOP3, KOP4, KOP5, KOP6, INOPR
+!We can have a finite element model with many kinds of elements.  For this demonstration, we will use only one kind (the bar element).
+!The ITYPE field is a number the user can define (in this case, the number 1).
+!The Ename field is the element number.  ANSYS has numerous predefined elements.  In this case we will use a bar element for the analysis.
+
+et,1,link180 !this is a bar element with an identification number = 1
+
+!we have to define the section properties for the element.  In this case it is the cross-sectional area of 525mm^2
+
+!We will use the sectype command - SECTYPE, SECID, Type, Subtype, Name, REFINEKEY
+!note that we need certain inputs, such as the section ID, type, subtype, etc.
+!for this exercise, we will skip the subtype
+!what we are doing is setting up some information that ANSYS will use to define the properties of the element, such as the Area
+
+sectype,1,link,,link1  !create section properties, with the ID number = 1, and we will name the section as link1
+
+!notice how the subtype field was skipped as evidenced by the two commas back-to-back
+
+!use secdata command
+!SECDATA, VAL1, VAL2, VAL3, VAL4, VAL5, VAL6, VAL7, VAL8, VAL9, VAL10, VAL11, VAL12
+!secdata defines the geometry of the section
+!for the link element, VAL1 is the area we want
+
+secdata,0.000525 !525mm^2 or 0.000525m^2
+
+!now we can define elements
+
+!use the E command - E, I, J, K, L, M, N, O, P --> the element is defined by the nodal connectivity
+
+E,1,2 !defines an element between nodes 1 and 2. We could have defined the element as e,2,1 as well
+!one can define the elements in any order in this example.
+!one can define elements starting from the left and moving to the right, or starting at the top, etc.
+
+E,2,3
+E,3,4
+E,4,2
+E,2,5
+E,1,5
+E,4,5
+
+!we can plot the elements
+eplo
+
+!define loads
+!use F command - F, NODE, Lab, VALUE, VALUE2, NEND, NINC
+
+!place horizontal force of 10,000N
+F,5,FX,10000  !10,000N force is at Node 5, acting in the positive horizontal direction
+
+!place vertical force of 40,000N
+
+F,4,FY,-40000
+
+
+!define boundary conditions.  We have a pin and roller supporting the truss
+
+!use the D command
+!D, Node, Lab, VALUE, VALUE2, NEND, NINC, Lab2, Lab3, Lab4, Lab5, Lab6
+!This command defines the degrees of the freedom at the nodes
+!for the pin, we want to constrain motion in the X and Y directions
+!for the roller, we only want to constrain motion in the Y direction
+
+D,1,UX,0 !Pin BC; at node 1, restrict translation (U) in the x direction
+
+D,1,UY,0 !Pin BC; at node 1, restrict translation (U) in the y direction
+
+D,3,UY,0 !roller BC
+
+!now we are done with setting up the model.  We can solve the model now and examine various quantities such as displacement.
+
+!enter solution processor
+/SOLU
+
+!enter solve command
+
+SOLVE
+
+!enter postprocessor - we want to view results.  In this case, we can view the displacement of node 2
+
+/POST1
+
+!Print nodal solution - use PRNSOL command.  We can print the displacement at the nodes in the Y direction
+
+PRNSOL,U,Y
+
+!compare the FEA solution to the analytical (exact solution)
+!the exact displacement at node 2 is 7.68 mm in the vertical (Y) direction
+
+!we can look at the forces in the elements (or links)
+!use the set command
+set, last
+
+!now we must tell ansys which results to extract, which we can later view
+!use etable command.  We can examine the INTERNAL truss forces
+!ETABLE, Lab, Item, Comp, Option
+!the 'res1' is a user-defined label which is used to name the table
+!for the item, we use smisc and comp, we type in the number 1, which gives us the internal forces in the truss members
+etable,res1,smisc,1
+
+!to view the results, use the pretab command
+!the command below will print the forces in the truss (link) elements
+pretab,res1

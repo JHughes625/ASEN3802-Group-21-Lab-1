@@ -1,0 +1,91 @@
+!Use consistent units: N,m
+!Demo with beam elements and two different materials
+!we will create a simple model of a cantilevered beam with 2 beam elements, hollow tube cross section, with a tip load
+!the beam shall have a tubular cross section - inner radius = 0.01m and outer radius of 0.015m
+
+!Enter preprocessor
+/prep7
+
+!Enter material properties, E = 70 GPa and nu = 0.3; linear elastic material behavior
+!We will assign properties to a material labeled as #1
+!use MP command - MP, Lab, MAT, C0, C1, C2, C3, C4
+
+mp,ex,1,70e9 !Young's modulus (N/m^2) assigned to material #1
+mp,prxy,1,0.3 !Poisson's ratio assigned to material #1
+
+!Let's define another material, one with a lower modulus
+
+mp,ex,2,60e9 !Young's modulus (N/m^2) assigned to material #2
+mp,prxy,2,0.3 !Poisson's ratio assigned to material #2
+
+
+!define geometry
+
+!We can define geometry by defining nodes at discrete locations and then form elements based on these nodes
+
+!The practice of creating nodes and elements is known as 'meshing'
+
+!use n command to define a node. This is a two-dimensional problem, so only x and y coordinates are needed
+!n command - N, NODE, X, Y, Z, THXY, THYZ, THZX
+!NODE above is a node number the user can define and the X,Y,Z fields are the x,y,z locations of the node
+
+n,1,0,0
+n,2,5,0
+n,3,10,0
+
+
+!create elements
+!define element type - this case we are using beam elements
+
+!Use ET command - ET, ITYPE, Ename, KOP1, KOP2, KOP3, KOP4, KOP5, KOP6, INOPR
+!We can have a finite element model with many kinds of elements.  For this demonstration, we will use only one kind (the beam element).
+!The ITYPE field is a number the user can define (in this case, the number 1).
+!The Ename field is the element number.  ANSYS has numerous predefined elements.  In this case we will use a bar element for the analysis.
+
+et,1,beam188 !this is a BEAM element with an identification number = 1
+
+!we have to define the section properties for the element.  
+
+!We will use the sectype command - SECTYPE, SECID, Type, Subtype, Name, REFINEKEY
+!note that we need certain inputs, such as the section ID, type, subtype, etc.
+
+!what we are doing is setting up some information that ANSYS will use to define the properties of the element
+
+sectype,1,beam,ctube,beam1  !create section properties, with the ID number = 1, and we will name the section as beam1
+
+!the beam has a tubular section, hence the need to use the ctube input for the 'subtype' field
+
+!use secdata command
+!SECDATA, VAL1, VAL2, VAL3, VAL4, VAL5, VAL6, VAL7, VAL8, VAL9, VAL10, VAL11, VAL12
+!secdata defines the geometry of the section
+!for the beam we need to enter the inner and outer radius
+
+secdata,0.01,0.015 
+
+!define elements
+
+e,1,2
+!for element 2, let's apply the lower modulus
+
+mat,2 !selects material type 2, which is the one with the lower modulus
+e,2,3
+
+
+!apply boundary conditions - fixed condition at node 1
+d,1,UX,0
+d,1,UY,0
+d,1,UZ,0
+d,1,ROTX,0
+d,1,ROTY,0
+d,1,ROTZ,0
+
+!apply a 40000N force
+
+f,3,FY,-40000
+
+!enter solution processor
+/SOLU
+
+!enter solve command
+
+SOLVE
