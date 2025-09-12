@@ -32,8 +32,7 @@ E,52,2
 E,2,54
 E,18,2
 E,2,20
-Egen,8,2,all ! Copy 8 times, increment nodes by 2 with each copy, copy all elements that
-currently exist
+Egen,8,2,all ! Copy 8 times, increment nodes by 2 with each copy, copy all elements that currently exist
 E,17,34 ! Add elements at the end of the truss
 E,34,51
 E,51,68
