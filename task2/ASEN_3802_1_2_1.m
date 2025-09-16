@@ -11,9 +11,9 @@ data_arbitrary = readmatrix('data/arbitrary.csv');
 data_symmetric = readmatrix('data/symmetric.csv');
 
 load_cases = 0:0.01:60;
-[F0_center, F1_center, F2_center, F3D_center, D_center] = line_of_best_fit(data_center, load_cases);
-[F0_arbitrary, F1_arbitrary, F2_arbitrary, F3D_arbitrary, D_arbitrary] = line_of_best_fit(data_arbitrary, load_cases);
-[F0_symmetric, F1_symmetric, F2_symmetric, F3D_symmetric, D_symmetric] = line_of_best_fit(data_symmetric, load_cases);
+[F0_center, F1_center, F2_center, F3D_center, D_center, R2_center] = line_of_best_fit(data_center, load_cases);
+[F0_arbitrary, F1_arbitrary, F2_arbitrary, F3D_arbitrary, D_arbitrary, R2_arbitrary] = line_of_best_fit(data_arbitrary, load_cases);
+[F0_symmetric, F1_symmetric, F2_symmetric, F3D_symmetric, D_symmetric, R2_symmetric] = line_of_best_fit(data_symmetric, load_cases);
 
 L = 4;
 truss_positions = (0 : 0.25 : L)';
@@ -28,7 +28,6 @@ for i = 0 : 10 : 50
   idx = find(position_arbitrary_map(:, 1) == a, 1);
   position_arbitrary_map(idx, 2) = position_arbitrary_map(idx, 2) + 1;
 end
-
 
 max_count_arbitrary = max(position_arbitrary_map(:, 2));
 position_arbitrary_from_counts = position_arbitrary_map( position_arbitrary_map(:, 2) == max_count_arbitrary, 1);
