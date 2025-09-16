@@ -3,15 +3,19 @@ function [a] = arbitrary(P, displacement_y)
   E = 6.95*10^10; % Pa
   I = 2.475*10^-6; % m^4
   EI = E*I;
-  TOLERANCE = 1.01;
 
-  for a = 0 : 0.25 : L
-    y_1 = (1 / EI) * ( (L^3 * P * (1 - a / L)) - (P * a^3 / 6) + (P * a^2 * L / 4) - (P * a * L^2 / 12) );
-    y_2 = (1 / EI) * ( ((5 / 48) * (P * a * L^2)) - (a^3 * L / 12) - (P * a * L^2 / 6) + (P * a^3 / 6) );
+  a = 0;
+  closest_displacement_difference = Inf;
+  for i = 0 : 0.25 : L
+    if (i < L / 2)
+      y = abs( (1 / EI) * ( ((5 / 48) * (P * i * L^2)) - (i^3 * L / 12) - (P * i * L^2 / 6) + (P * i^3 / 6) ) );
+    else
+      y = abs( (1 / EI) * ( (L^3 * P * (1 - i / L)) - (P * i^3 / 6) + (P * i^2 * L / 4) - (P * i * L^2 / 12) ) );
+    end
 
-    if (displacement_y - TOLERANCE <= y_1 && y_1 <= displacement_y + TOLERANCE) || ...
-       (displacement_y - TOLERANCE <= y_2 && y_2 <= displacement_y + TOLERANCE)
-      return;
+    if ( abs(y - displacement_y) < closest_displacement_difference )
+      closest_displacement_difference = abs(y - displacement_y);
+      a = i;
     end
   end
 
