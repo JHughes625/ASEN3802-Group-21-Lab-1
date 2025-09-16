@@ -5,10 +5,15 @@ clear;
 clc;
 close all;
 
-PLOT_DATA = 0;
+PLOT_DATA = 1;
 data_center = readmatrix('data/center.csv');
 data_arbitrary = readmatrix('data/arbitrary.csv');
 data_symmetric = readmatrix('data/symmetric.csv');
+
+% add offsets to F3D to make them positive
+data_center(:, 5) = data_center(:, 5) - mean(data_center(10, 5));
+data_arbitrary(:, 5) = data_arbitrary(:, 5) - mean(data_arbitrary(10, 5));
+data_symmetric(:, 5) = data_symmetric(:, 5) - mean(data_symmetric(10, 5));
 
 load_cases = 0:0.01:60;
 [F0_center, F1_center, F2_center, F3D_center, D_center, R2_center] = line_of_best_fit(data_center, load_cases);
@@ -43,7 +48,7 @@ if PLOT_DATA == 1
   plot(load_cases, F0_center, 'r');
   plot(load_cases, F0_arbitrary, 'g');
   plot(load_cases, F0_symmetric, 'b');
-  title('Plot of F_0 vs Applied Loading');
+  title('First Left Load Cell Reading for Each Case');
   xlabel('Applied Loading (lb)');
   ylabel('F_0 (lb)');
   legend('Case 1 Data', 'Case 2 Data', 'Case 3 Data','Case 1 Line of Best Fit', 'Case 2 Line of Best Fit', 'Case 3 Line of Best Fit', 'Location', 'best');
@@ -58,7 +63,7 @@ if PLOT_DATA == 1
   plot(load_cases, F1_center, 'r');
   plot(load_cases, F1_arbitrary, 'g');
   plot(load_cases, F1_symmetric, 'b');
-  title('Plot of F_center vs Applied Loading');
+  title('Second Left Load Cell Reading for Each Case');
   xlabel('Applied Loading (lb)');
   ylabel('F_center (lb)');
   legend('Case 1 Data', 'Case 2 Data', 'Case 3 Data','Case 1 Line of Best Fit', 'Case 2 Line of Best Fit', 'Case 3 Line of Best Fit', 'Location', 'best');
@@ -73,7 +78,7 @@ if PLOT_DATA == 1
   plot(load_cases, F2_center, 'r');
   plot(load_cases, F2_arbitrary, 'g');
   plot(load_cases, F2_symmetric, 'b');
-  title('Plot of F_arbitrary vs Applied Loading');
+  title('Right Load Cell Reading for Each Case');
   xlabel('Applied Loading (lb)');
   ylabel('F_arbitrary (lb)');
   legend('Case 1 Data', 'Case 2 Data', 'Case 3 Data','Case 1 Line of Best Fit', 'Case 2 Line of Best Fit', 'Case 3 Line of Best Fit', 'Location', 'best');
@@ -88,9 +93,9 @@ if PLOT_DATA == 1
   plot(load_cases, F3D_center, 'r');
   plot(load_cases, F3D_arbitrary, 'g');
   plot(load_cases, F3D_symmetric, 'b');
-  title('Plot of F_symmetricD vs Applied Loading');
+  title('Adjusted Center Load Cell Reading for Each Case');
   xlabel('Applied Loading (lb)');
-  ylabel('F_symmetricD (lb)');
+  ylabel('F_{3D} (lb)');
   legend('Case 1 Data', 'Case 2 Data', 'Case 3 Data','Case 1 Line of Best Fit', 'Case 2 Line of Best Fit', 'Case 3 Line of Best Fit', 'Location', 'best');
   hold off;
 
@@ -103,7 +108,7 @@ if PLOT_DATA == 1
   plot(load_cases, D_center, 'r');
   plot(load_cases, D_arbitrary, 'g');
   plot(load_cases, D_symmetric, 'b');
-  title('Plot of Vertical Displacement vs Applied Loading (Positive is Downward');
+  title('Midspan Vertical Displacement for Each Case (Positive is Downward)');
   xlabel('Applied Loading (lb)');
   ylabel('Displacement (in)');
   legend('Case 1 Data', 'Case 2 Data', 'Case 3 Data','Case 1 Line of Best Fit', 'Case 2 Line of Best Fit', 'Case 3 Line of Best Fit', 'Location', 'best');
