@@ -5,7 +5,7 @@ clear;
 clc;
 close all;
 
-PLOT_DATA = 1;
+PLOT_DATA = 0;
 data_center = readmatrix('data/center.csv');
 data_arbitrary = readmatrix('data/arbitrary.csv');
 data_symmetric = readmatrix('data/symmetric.csv');
@@ -27,16 +27,25 @@ lbs_to_N = 4.44822;
 
 position_arbitrary_map = [truss_positions, zeros(length(truss_positions), 1)];
 midspan_deflection_arbitrary = [(0:10:50)', zeros(6, 1)];
+a_from_moment = zeros(1, 5);
 for i = 0 : 10 : 50
   deflection = interp1(load_cases, D_arbitrary, i) * in_to_m;
   [a, midspan_deflection_arbitrary(i / 10 + 1, 2)] = arbitrary(lbs_to_N * i, deflection);  
   idx = find(position_arbitrary_map(:, 1) == a, 1);
   position_arbitrary_map(idx, 2) = position_arbitrary_map(idx, 2) + 1;
+
+  if (i ~= 0)
+    a_from_moment(i / 10) = mean([
+      L - (lbs_to_N * ( interp1(load_cases, F0_arbitrary, i) + interp1(load_cases, F1_arbitrary, i) ) * L / (i * lbs_to_N) );
+      lbs_to_N * interp1(load_cases, F2_arbitrary, i) * L / (i * lbs_to_N)
+    ]);
+  end
 end
 
 max_count_arbitrary = max(position_arbitrary_map(:, 2));
 position_arbitrary_from_counts = position_arbitrary_map( position_arbitrary_map(:, 2) == max_count_arbitrary, 1);
 position_arbitrary_from_avg = position_from_avg(position_arbitrary_map);
+position_arbitrary_from_moments = mean(a_from_moment);
 
 
 if PLOT_DATA == 1
