@@ -43,3 +43,31 @@ E,34,51
 E,51,68
 E,68,17
 E,51,17
+
+! Apply boundary conditions
+d,1,UX,0
+d,1,UY,0
+d,1,UZ,0
+
+d,1,UX,0
+d,1,UY,0
+d,1,UZ,0
+
+! Apply external forces
+F,26,FY,-111.2
+F,43,FY,-111.2
+
+! Now we are going to solve
+/SOLU
+
+SOLVE
+
+/POST1
+
+PRNSOL,U,Y
+
+! Why do we do this?
+set, last
+
+! Extracting results
+etable,res1,1,
