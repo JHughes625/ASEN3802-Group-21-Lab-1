@@ -10,7 +10,7 @@ n,52,0,0,0.25
 ngen,17,1,1,52,17,0.25,0,0,1! Copy nodes 17 times
 et,1,beam188 !defines beam element useful to our truss
 sectype,1,beam,ctube,beam1 ! section properties, ID = 1
-secdata,0.0031755,0.0047625 !Inner and outer radius achieved 
+secdata,0.0047625,0.0031755 !Inner and outer radius achieved 
 E,1,2 ! Create 2 cell structure without the bars
 E,2,3
 E,18,19
@@ -72,3 +72,4 @@ set, last
 
 ! Extracting results
 etable,res1,1,
+
