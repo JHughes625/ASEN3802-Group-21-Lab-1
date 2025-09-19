@@ -49,9 +49,9 @@ d,52,UX,0
 d,52,UY,0
 d,52,UZ,0
 
-d,36,UX,0
-d,36,UY,0
-d,36,UZ,0
+d,1,UX,0
+d,1,UY,0
+d,1,UZ,0
 
 d,68,UZ,0
 d,68,UY,0
@@ -78,6 +78,7 @@ set, last
 
 ! Extracting results
 etable,res1,1,
+
 
 
 
