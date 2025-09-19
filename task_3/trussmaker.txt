@@ -1,0 +1,39 @@
+/prep7 ! enter pre-processor
+n,1,0,0,0 ! Create 4 nodes
+n,18,0,0.25,0
+n,35,0,0.25,0.25
+n,52,0,0,0.25
+ngen,17,1,1,52,17,0.25,0,0,1! Copy nodes 17 times
+et,1,link180 !defines rod, or truss element
+E,1,2 ! Create 2 cell structure without the bars
+E,2,3
+E,18,19
+E,19,20
+E,35,36
+E,36,37
+E,52,53
+E,53,54
+E,1,18
+E,2,19
+E,18,35
+E,19,36
+E,35,52
+E,36,53
+E,52,1
+E,53,2
+E,1,35
+E,53,19
+E,18,36
+E,36,20
+E,52,36
+E,36,54
+E,52,2
+E,2,54
+E,18,2
+E,2,20
+Egen,8,2,all ! Copy 8 times, increment nodes by 2 with each copy
+E,17,34 ! Add elements at the end of the truss
+E,34,51
+E,51,68
+E,68,17
+E,51,17
