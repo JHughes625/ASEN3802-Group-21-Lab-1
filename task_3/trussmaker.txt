@@ -10,7 +10,7 @@ n,52,0,0,0.25
 ngen,17,1,1,52,17,0.25,0,0,1! Copy nodes 17 times
 et,1,beam188 !defines beam element useful to our truss
 sectype,1,beam,ctube,beam1 ! section properties, ID = 1
-secdata,0.001587,0.009525 !Outer radius and thickness achieved 
+secdata,0.003175,0.0047625 !Outer radius and thickness achieved 
 E,1,2 ! Create 2 cell structure without the bars
 E,2,3
 E,18,19
@@ -77,9 +77,17 @@ PRNSOL,U,Y
 set, last
 
 ! Extracting results
-etable,res1,1,
+! etable,res1,smisc,1
+
+ETABLE,UY,U,Y
 
 
+! saves solution to file
+/POST1
+SET,LAST
 
+/OUTPUT,uy_list,txt   ! start writing to uy_list.txt
+PRNSOL,U,Y            ! print UY for all nodes
+/OUTPUT               ! stop writing (return to screen)
 
 
