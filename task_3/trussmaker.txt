@@ -1,14 +1,19 @@
 /prep7 ! enter pre-processor
 ! Enter material properties of this case
 mp,ex,1,69.5e9 !Young's modulus (N/m^2) assigned to material #1
-mp,prxy,1,0.0 !Poisson's ratio (tentatively zero, IT COULD BE 0.33)
+mp,prxy,1,0.33 !Poisson's ratio (tentatively zero, IT COULD BE 0.33)
+
+!Uncomment these, still need to get the right link number
+!mp,ex,2,65e9 !Young's modulus (N/m^2) assigned to material #2
+!mp,prxy,2,0.33 !Poisson's ratio 2
 
 n,1,0,0,0 ! Create 4 nodes
 n,18,0,0.25,0
 n,35,0,0.25,0.25
 n,52,0,0,0.25
 ngen,17,1,1,52,17,0.25,0,0,1! Copy nodes 17 times
-et,1,beam188 !defines beam element useful to our truss
+et,1,link180 !et,1,beam188  defines LINK not beam element useful to our truss 
+
 sectype,1,beam,ctube,beam1 ! section properties, ID = 1
 secdata,0.003175,0.0047625 !Outer radius and thickness achieved 
 E,1,2 ! Create 2 cell structure without the bars
@@ -89,5 +94,6 @@ SET,LAST
 /OUTPUT,uy_list,txt   ! start writing to uy_list.txt
 PRNSOL,U,Y            ! print UY for all nodes
 /OUTPUT               ! stop writing (return to screen)
+
 
 
