@@ -1,0 +1,105 @@
+/prep7 ! enter pre-processor
+
+/PNUM, NODE, 1
+
+! Enter material properties of this case
+mp,ex,1,69.5e9 !Young's modulus (N/m^2) assigned to material #1
+mp,prxy,1,0.0 !Poisson's ratio (tentatively zero, IT COULD BE 0.33)
+
+! other properties
+pi = ACOS(-1)
+R_in = 0.003175
+R_out = 0.0047625
+area = pi*(R_out**2-R_in**2)
+
+n,1,0,0,0 ! Create 4 nodes
+n,18,0,0.25,0
+n,35,0,0.25,0.25
+n,52,0,0,0.25
+ngen,17,1,1,52,17,0.25,0,0,1 ! Copy nodes 17 times
+
+!et,1,beam188 !defines beam element useful to our truss
+!sectype,1,beam,ctube,beam1 ! section properties, ID = 1
+!secdata, R_in, R_out ! inner and outer radius
+
+ET, 1, link180
+SECTYPE, 1, LINK, , link1
+SECDATA, area
+
+E,1,2 ! Create 2 cell structure without the bars
+E,2,3
+E,18,19
+E,19,20
+E,35,36
+E,36,37
+E,52,53
+E,53,54
+E,1,18
+E,2,19
+E,18,35
+E,19,36
+E,35,52
+E,36,53
+E,52,1
+E,53,2
+E,1,35
+E,53,19
+E,18,36
+E,36,20
+E,52,36
+E,36,54
+E,52,2
+E,2,54
+E,18,2
+E,2,20
+Egen,8,2,all ! Copy 8 times, increment nodes by 2 with each copy
+E,17,34 ! Add elements at the end of the truss
+E,34,51
+E,51,68
+E,68,17
+E,51,17
+
+! Apply boundary conditions
+d,52,UX,0
+d,52,UY,0
+d,52,UZ,0
+
+d,1,UX,0
+d,1,UY,0
+d,1,UZ,0
+
+d,68,UZ,0
+d,68,UY,0
+
+d,17,UZ,0
+d,17,UY,0
+
+
+! Apply external forces
+F,26,FY,-111.2
+F,43,FY,-111.2
+
+! Now we are going to solve
+/SOLU
+
+SOLVE
+
+/POST1
+EPLOT
+
+! redirect output
+/OUTPUT, Downloads/data, txt 
+
+! print UY for all nodes
+PRNSOL, U, Y
+
+SET, LAST
+
+ETABLE, ERAS
+ETABLE, F_internal, SMISC, 1
+! ETABLE, Moment_Y, SMISC, 2
+! ETABLE, Moment_Z, SMISC, 3
+
+PRETAB, F_internal, Moment_Y, Moment_Z
+
+/OUTPUT  ! stop writing (return to screen)
