@@ -23,6 +23,5 @@ BEGIN {
 }
 
 /^[[:space:]]*[0-9]+[[:space:]]*-?[0-9]+.*$/ {
-  # print $0 >> outfile;
-  print $0;
+  print $0 >> outfile;
 }
